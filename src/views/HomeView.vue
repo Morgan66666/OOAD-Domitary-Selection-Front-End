@@ -1,36 +1,36 @@
 <template>
   <div class="cloud-dashboard" @click="closeDropdown">
-    <div role="banner"
-         class="cfc-platform-bar-container cfc-platform-bar-shadow cfc-platform-bar-white gm2-platform-bar">
-      <div class="left-section">
-        <div class="project-info">
-          <img src="../assets/LOGO.svg" class="logo" alt="">
-        </div>
-      </div>
-      <div class="right-section">
-        <div class="header-actions">
-          <div class="button-container">
-            <button style="height: 30px; border: none; background-color: transparent">
-              <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"
-                   focusable="false">
-                <path
-                    d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z"></path>
-              </svg>
-            </button>
-          </div>
-          <div class="avatar-container">
-            <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>
-          </div>
-          <div class="dropdown" v-if="showDropdown">
-            <ul>
-              <li>Profile</li>
-              <li>Settings</li>
-              <li>Logout</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--    <div role="banner"-->
+<!--         class="cfc-platform-bar-container cfc-platform-bar-shadow cfc-platform-bar-white gm2-platform-bar">-->
+<!--      <div class="left-section">-->
+<!--        <div class="project-info">-->
+<!--          <img src="../assets/LOGO.svg" class="logo" alt="">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="right-section">-->
+<!--        <div class="header-actions">-->
+<!--          <div class="button-container">-->
+<!--            <button style="height: 30px; border: none; background-color: transparent">-->
+<!--              <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"-->
+<!--                   focusable="false">-->
+<!--                <path-->
+<!--                    d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z"></path>-->
+<!--              </svg>-->
+<!--            </button>-->
+<!--          </div>-->
+<!--          <div class="avatar-container">-->
+<!--            <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>-->
+<!--          </div>-->
+<!--          <div class="dropdown" v-if="showDropdown">-->
+<!--            <ul>-->
+<!--              <li>Profile</li>-->
+<!--              <li>Settings</li>-->
+<!--              <li>Logout</li>-->
+<!--            </ul>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <main class="dashboard-main">
       <img src="../assets/background_illustration_v2.svg" alt="background" class="background_img">
@@ -62,7 +62,7 @@
         </div>
         <br>
         <div class="quick-access-grid">
-          <a class="quick-access-card" href="#">
+          <router-link class="quick-access-card"  :to = "{name: 'RoomSearchView'}">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
@@ -82,8 +82,8 @@
                 </div>
               </div>
             </div>
-          </a>
-          <a class="quick-access-card" href="#">
+          </router-link>
+          <router-link class="quick-access-card" :to = "{name: 'TeamSearchView'}">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
@@ -97,9 +97,9 @@
                 </div>
               </div>
             </div>
-          </a>
-          <a class="quick-access-card"
-             href="#">
+          </router-link>
+          <router-link class="quick-access-card"
+             :to = "{name: 'TeamView'}">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
@@ -117,7 +117,7 @@
                 </div>
               </div>
             </div>
-          </a>
+          </router-link>
           <a class="quick-access-card"
              href="#">
             <div class="quick-access-card-content-wrapper">
@@ -210,41 +210,10 @@ a {
   position: relative;
 }
 
-.cfc-platform-bar-container {
-  display: flex;
-  justify-content: space-between; /* 使子元素分散到两边 */
-  align-items: center; /* 垂直居中子元素 */
-  width: 100%; /* 确保宽度为100% */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选的阴影效果 */
-  background-color: #fff; /* 背景颜色 */
-  padding: 0 20px; /* 根据需要添加内边距 */
-  height: 60px; /* 设置一个固定高度 */
-}
 
-.cfc-platform-bar-container > .left-section {
 
-}
 
-.cfc-platform-bar-container > .right-section {
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* 设置块级元素在交叉轴上（垂直方向）靠右对齐 */
-}
 
-.cfc-platform-bar-shadow.cfc-platform-bar-container.gm2-platform-bar {
-  box-shadow: none;
-  border-bottom: 1px solid #dadce0;
-}
-
-.cfc-platform-bar-container.gm2-platform-bar {
-  border-bottom: 0;
-  height: 60px;
-}
-
-.cfc-platform-bar-white.gm2-platform-bar {
-  background-color: #fff;
-}
 
 
 .welcome-container {
@@ -354,7 +323,7 @@ a {
 .cloud-dashboard {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 60px);
   width: 100vw;
   margin: 0;
   padding: 0;
@@ -370,15 +339,7 @@ a {
 //background-color: #2b7de9; /* 页脚背景色 */ text-align: center; width: 100%; position: absolute; bottom: 0;
 }
 
-.header-actions {
-  display: flex;
-  justify-content: flex-end; /* 使内容靠右对齐 */
-  align-items: center;
-}
 
-.button-container, .avatar-container {
-  margin-right: 10px; /* 在元素之间添加一些间隔 */
-}
 
 .avatar-container img{
   width: 100%; /* 确保图片填满其容器 */
@@ -386,44 +347,7 @@ a {
   vertical-align: middle;
 }
 
-.avatar-container {
-  max-width: 40px; /* 限制图片的最大宽度 */
-  max-height: 40px; /* 限制图片的最大高度 */
-  text-align: center;
-}
-.button-container{
-  margin-top: 2%;
-}
 
-
-
-.logo {
-  width: 13vw;
-  margin-left: 1vw;
-}
-
-.icon {
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-.avatar {
-  border-radius: 50%; /* 头像的圆形效果 */
-}
-
-
-
-
-.dropdown {
-  position: absolute;
-  top: 50px; /* 根据需要调整 */
-  right: 10px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
 
 .dropdown ul {
   list-style-type: none;

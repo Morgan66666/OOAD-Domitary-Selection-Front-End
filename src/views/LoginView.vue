@@ -33,6 +33,8 @@
 <script>
 
 
+import axiosInstance from '../axios-config'
+
 export default {
   data() {
     return {
@@ -67,7 +69,21 @@ export default {
         password: this.password
       }
       //TODO: login
-      loginForm.username = this.username;
+      this.$axios.post('/login', loginForm)
+        .then((response) => {
+          console.log(response.data)
+          if (response.data.code === 200) {
+            axiosInstance.defaults.headers.common['Authorization'] = response.data.data[0];
+            localStorage.setItem('token', response.data.data[0]);
+            alert(response.data.data[0])
+            this.$router.push('/home')
+          } else {
+            alert(response.data.msg)
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
   }
 }

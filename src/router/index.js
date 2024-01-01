@@ -23,10 +23,11 @@ const routes = [
     path: '/',
     redirect:'/login'
   },{
-    path: '/user',
-    name: 'UserView',
-    component: () => import(/* webpackChunkName: "about" */ '../views/UserView.vue'),
-    meta: {show:true}
+    path: '/user/:id',
+    name: 'UserInfoView',
+    component: () => import(/* webpackChunkName: "about" */ '../views/UserInfoView.vue'),
+    meta: {show:true},
+    props: true
   },{
     path: '/team/search',
     name: 'TeamSearchView',
@@ -41,7 +42,7 @@ const routes = [
     path: '/room/search',
     name: 'RoomSearchView',
     component: () => import(/* webpackChunkName: "about" */ '../views/RoomSearchView.vue'),
-    meta: {show:true}
+    meta: {show:false}
   },{
     path: '/room',
     name: 'RoomView',
@@ -53,12 +54,13 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/TeamFavourView.vue'),
     meta: {show:true}
   },{
-    path: '/whisper',
+    path: '/chat',
     name: 'MessageView',
     component: () => import(/* webpackChunkName: "about" */ '../views/MessageView.vue'),
     meta: {show:true}
-  },{
-    path: "*", redirect: "/"
+  }
+  ,{
+    path: "*", redirect: "/home"
   }
 ]
 
