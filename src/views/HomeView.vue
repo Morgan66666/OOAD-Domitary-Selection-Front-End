@@ -1,36 +1,36 @@
 <template>
   <div class="cloud-dashboard" @click="closeDropdown">
-<!--    <div role="banner"-->
-<!--         class="cfc-platform-bar-container cfc-platform-bar-shadow cfc-platform-bar-white gm2-platform-bar">-->
-<!--      <div class="left-section">-->
-<!--        <div class="project-info">-->
-<!--          <img src="../assets/LOGO.svg" class="logo" alt="">-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="right-section">-->
-<!--        <div class="header-actions">-->
-<!--          <div class="button-container">-->
-<!--            <button style="height: 30px; border: none; background-color: transparent">-->
-<!--              <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"-->
-<!--                   focusable="false">-->
-<!--                <path-->
-<!--                    d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z"></path>-->
-<!--              </svg>-->
-<!--            </button>-->
-<!--          </div>-->
-<!--          <div class="avatar-container">-->
-<!--            <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>-->
-<!--          </div>-->
-<!--          <div class="dropdown" v-if="showDropdown">-->
-<!--            <ul>-->
-<!--              <li>Profile</li>-->
-<!--              <li>Settings</li>-->
-<!--              <li>Logout</li>-->
-<!--            </ul>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
+    <!-- <div role="banner" class="cfc-platform-bar-container cfc-platform-bar-shadow cfc-platform-bar-white gm2-platform-bar">
+      <div class="left-section">
+        <div class="project-info">
+          <img src="../assets/LOGO.svg" class="logo" alt="">
+        </div>
+      </div>
+      <div class="right-section">
+        <div class="header-actions">
+          <div class="button-container">
+            <button style="height: 30px; border: none; background-color: transparent">
+              <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"
+                focusable="false">
+                <path
+                  d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z">
+                </path>
+              </svg>
+            </button>
+          </div>
+          <div class="avatar-container">
+            <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown" />
+          </div>
+          <div class="dropdown" v-if="showDropdown">
+            <ul>
+              <li>Profile</li>
+              <li>Settings</li>
+              <li>Logout</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div> -->
 
     <main class="dashboard-main">
       <img src="../assets/background_illustration_v2.svg" alt="background" class="background_img">
@@ -62,18 +62,17 @@
         </div>
         <br>
         <div class="quick-access-grid">
-          <router-link class="quick-access-card"  :to = "{name: 'RoomSearchView'}">
+          <a class="quick-access-card" href="" @click="jumpRoomSearch()">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
-                  <svg data-icon-name="bigquerySectionIcon" viewBox="0 0 24 24" width="24" height="24"
-                       fill="currentColor"
-                       fill-rule="evenodd" aria-hidden="true">
+                  <svg data-icon-name="bigquerySectionIcon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"
+                    fill-rule="evenodd" aria-hidden="true">
                     <path d="M7 11v1.922c.25.87 1.176 1.48 2 1.85V11H7z" opacity=".6"></path>
                     <path d="M10 9v5.933c.34.04.688.067 1.045.067.326 0 .643-.023.955-.058V9h-2z"></path>
                     <path
-                        d="M13.007 12v2.7c.836-.373 1.618-.825 2-1.85V12h-2zm7.883 7.072l-3.19-3.188a.363.363 0 00-.304-.095 7.8 7.8 0 01-1.61 1.6.37.37 0 00.097.3l3.187 3.18a.38.38 0 00.537 0l1.28-1.28a.38.38 0 000-.54z"
-                        opacity=".6"></path>
+                      d="M13.007 12v2.7c.836-.373 1.618-.825 2-1.85V12h-2zm7.883 7.072l-3.19-3.188a.363.363 0 00-.304-.095 7.8 7.8 0 01-1.61 1.6.37.37 0 00.097.3l3.187 3.18a.38.38 0 00.537 0l1.28-1.28a.38.38 0 000-.54z"
+                      opacity=".6"></path>
                     <path d="M11 3a8 8 0 100 16 8 8 0 000-16m0 14a6 6 0 110-12 6 6 0 010 12"></path>
                   </svg>
                 </div>
@@ -82,8 +81,8 @@
                 </div>
               </div>
             </div>
-          </router-link>
-          <router-link class="quick-access-card" :to = "{name: 'TeamSearchView'}">
+          </a>
+          <a class="quick-access-card" href="" @click="jumpTeamSearch()">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
@@ -93,38 +92,37 @@
                   </svg>
                 </div>
                 <div class="content-text">
-                  <div class="page-title">查找同学或队伍</div>
+                  <div class="page-title">查找队伍</div>
                 </div>
               </div>
             </div>
-          </router-link>
-          <router-link class="quick-access-card"
-             :to = "{name: 'TeamView'}">
+          </a>
+          <a class="quick-access-card" href="" @click="jumpStudentSearch()">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
-                  <svg data-icon-name="iamSectionIcon" viewBox="0 0 24 24" width="24" height="24"
-                       fill="currentColor" fill-rule="evenodd" aria-hidden="true">
+                  <svg data-icon-name="iamSectionIcon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"
+                    fill-rule="evenodd" aria-hidden="true">
                     <path
-                        d="M12 2.084V5.44a2.56 2.56 0 010 5.12V12c1.335 0 4 .824 4 2.46v1.265c-.065.094-.126.19-.195.283A7.433 7.433 0 0112 18.738v2.827a11.062 11.062 0 008-10.667v-5.48l-8-3.334z"
-                        opacity=".8"></path>
+                      d="M12 2.084V5.44a2.56 2.56 0 010 5.12V12c1.335 0 4 .824 4 2.46v1.265c-.065.094-.126.19-.195.283A7.433 7.433 0 0112 18.738v2.827a11.062 11.062 0 008-10.667v-5.48l-8-3.334z"
+                      opacity=".8"></path>
                     <path
-                        d="M12 2.084V5.44a2.56 2.56 0 000 5.12V12c-1.335 0-4 .824-4 2.46v1.265c.065.094.126.19.195.283A7.433 7.433 0 0012 18.738v2.827a11.062 11.062 0 01-8-10.667v-5.48l8-3.334z"></path>
+                      d="M12 2.084V5.44a2.56 2.56 0 000 5.12V12c-1.335 0-4 .824-4 2.46v1.265c.065.094.126.19.195.283A7.433 7.433 0 0012 18.738v2.827a11.062 11.062 0 01-8-10.667v-5.48l8-3.334z">
+                    </path>
                   </svg>
                 </div>
                 <div class="content-text">
-                  <div class="page-title">队伍管理</div>
+                  <div class="page-title">查找同学</div>
                 </div>
               </div>
             </div>
-          </router-link>
-          <a class="quick-access-card"
-             href="#">
+          </a>
+          <a class="quick-access-card" href="" @click="jumpTeam()">
             <div class="quick-access-card-content-wrapper">
               <div class="content">
                 <div class="centered-icon">
-                  <svg data-icon-name="computeSectionIcon" viewBox="0 0 24 24" width="24" height="24"
-                       fill="currentColor" fill-rule="evenodd" aria-hidden="true">
+                  <svg data-icon-name="computeSectionIcon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"
+                    fill-rule="evenodd" aria-hidden="true">
                     <path d="M7 3h2v2H7zM3 7h2v2H3z" opacity=".8"></path>
                     <path d="M19 7h2v2h-2z" opacity=".6"></path>
                     <path d="M3 11h2v2H3z" opacity=".8"></path>
@@ -142,7 +140,7 @@
                   </svg>
                 </div>
                 <div class="content-text">
-                  <div class="page-title">不知道加什么功能</div>
+                  <div class="page-title">我的队伍</div>
                 </div>
               </div>
             </div>
@@ -153,9 +151,6 @@
 
     </main>
 
-    <footer class="dashboard-footer">
-      <!-- 页脚内容 -->
-    </footer>
   </div>
 </template>
 
@@ -182,10 +177,27 @@ export default {
       if (this.showDropdown) {
         this.showDropdown = false;
       }
+    },
+    jumpTeamSearch() {
+      console.log('jump');
+      this.$router.push('/team/search')
+    },
+    jumpRoomSearch() {
+      this.$router.push('/room/search')
+    },
+    jumpTeam() {
+      this.$router.push({ path: '/team', query: { teamId: 1 } })
+    },
+    jumpStudentSearch() {
+      this.$router.push('/student/search')
     }
   },
   mounted() {
     document.addEventListener('click', this.closeDropdown);
+    let student = JSON.parse(localStorage.getItem('user'));
+    this.studentId = student.studentId;
+    this.studentName = student.name;
+
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);
@@ -209,7 +221,6 @@ a {
   font-family: 'Roboto', sans-serif;
   position: relative;
 }
-
 
 
 
@@ -336,14 +347,21 @@ a {
 
 .dashboard-footer {
   padding: 0.5rem;
-//background-color: #2b7de9; /* 页脚背景色 */ text-align: center; width: 100%; position: absolute; bottom: 0;
+  background-color: #2b7de9;
+  /* 页脚背景色 */
+  text-align: center;
+  width: 100%;
+  position:
+    absolute;
+  bottom: 0;
 }
 
 
-
-.avatar-container img{
-  width: 100%; /* 确保图片填满其容器 */
-  height: auto; /* 保持图片的纵横比 */
+.avatar-container img {
+  width: 100%;
+  /* 确保图片填满其容器 */
+  height: auto;
+  /* 保持图片的纵横比 */
   vertical-align: middle;
 }
 

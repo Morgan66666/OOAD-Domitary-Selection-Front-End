@@ -39,10 +39,10 @@
         </div>
       </div>
       <el-button type="primary" class="edit-button" @click="edit" v-if="self1 || teacher" >编辑信息</el-button>
-      <el-button v-if="self1" @click="chat">聊天</el-button>
+      <el-button v-if="!self1" @click="chat">聊天</el-button>
     </div>
     <div v-else>Loading...</div>
-    <el-dialog title="" :visible.sync="dialogFormVisible" class="dialog-st" width="22%" v-if="self1">
+    <el-dialog title="" :visible.sync="dialogFormVisible" class="dialog-st" width="31%" v-if="self1">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="起床时间">
           <el-time-picker
@@ -59,6 +59,18 @@
         </el-form-item>
         <el-form-item label="个人简介">
           <el-input type="textarea" v-model="form.intro"></el-input>
+        </el-form-item>
+        <el-form-item label="头像">
+          <el-upload
+              class="upload-demo"
+              drag
+              :action="uploadUrl"
+              :http-request="handleUpload"
+              multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,6 +123,8 @@
 <script>
 
 
+import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 export default {
   props: ['id'],
   name: 'UserInfo',
@@ -150,6 +164,7 @@ export default {
         };
     return {
       student: null,
+      uploadUrl: '',
       studentEducationLevel: '',
       studentGender: '',
       imageUrl: '',
@@ -162,7 +177,8 @@ export default {
         account: null,
         awakeTime: null,
         sleepTime: null,
-        intro: null
+        intro: null,
+        imgURL: ''
       },
       studentId: '',
       self1: false,
@@ -206,6 +222,71 @@ export default {
     }
   },
   methods: {
+    handleUpload(file) {
+      this.getOssSignature().then(signatureInfo => {
+        console.log('获取签名信息成功', signatureInfo);
+        let formData = new FormData();
+        // const extension = file.name.split('.').pop();
+        const extension = file.file.name.split('.').pop();
+        const uniqueFilename = uuidv4() + '.' + extension;
+        console.log('uniqueFilename', uniqueFilename);
+        if (extension !== 'jpg' && extension !== 'png') {
+          this.$message({
+            message: '只能上传jpg/png文件',
+            type: 'error'
+          });
+          return;
+        }
+        formData.append('key', signatureInfo.dir + uniqueFilename);
+        formData.append('policy', signatureInfo.policy);
+        formData.append('OSSAccessKeyId', signatureInfo.accessid);
+        formData.append('signature', signatureInfo.signature);
+        formData.append('file', file.file);
+
+        axios.post(signatureInfo.host, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }).then(response => {
+          console.log('上传成功', response);
+          // 处理上传成功的逻辑
+          this.imageUrl = signatureInfo.host + '/' + uniqueFilename;
+          this.$message({
+            message: '上传成功',
+            type: 'success'
+          });
+        }).catch(error => {
+          console.error('上传失败', error);
+          // 处理上传失败的逻辑
+          this.$message({
+            message: '上传失败',
+            type: 'error'
+          });
+        });
+      }).catch(error => {
+        console.error('获取签名信息失败', error);
+        // 处理获取签名信息失败的逻辑
+        this.$message({
+          message: '获取签名信息失败',
+          type: 'error'
+        });
+      });
+    },
+    getOssSignature() {
+      // 实现获取OSS签名信息的逻辑，返回一个Promise
+      // 示例中省略了具体实现
+      return new Promise((resolve, reject) => {
+        // 假设这是您的服务器端API端点，用于获取OSS签名信息
+
+        this.$axios.get('/oss').then(response => {
+          if(response.data) {
+            resolve(response.data);
+          } else {
+            reject('No signature data received');
+          }
+        }).catch(error => {
+          reject(error);
+        });
+      });
+    },
     submitFormTeacher(formName) {
       if (this.ruleForm.gender === 1) {
         if (this.ruleForm.educationLevel === 0) {
@@ -305,13 +386,13 @@ export default {
     submitForm() {
       this.form.awakeTime = this.formatTime(this.form.awakeTime);
       this.form.sleepTime = this.formatTime(this.form.sleepTime);
-      alert(this.form.awakeTime)
       // alert(this.form.awakeTime)
-      this.$axios.put('/users/' + this.studentId ,
+      this.$axios.put('/users/' + this.studentId,
           {
             awakeTime: this.form.awakeTime,
             sleepTime: this.form.sleepTime,
-            intro: this.form.intro
+            intro: this.form.intro,
+            imgURL: this.imageUrl
           })
           .then(response => {
             if (response.data.code === 200) {
@@ -340,6 +421,7 @@ export default {
       this.form.awakeTime = new Date('2020-01-01 ' + this.student.awakeTime);
       this.form.sleepTime = new Date('2020-01-01 ' + this.student.sleepTime);
       this.form.intro = this.student.intro;
+      this.form.imgURL = this.student.imgUrl;
       this.dialogFormVisible = true;
     },
     fetchStudentData() {
@@ -365,10 +447,10 @@ export default {
 
                 .then(response => {
                   this.student = response.data.data;
-                  this.student.imgUrl = 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg';
+                  // this.student.imgUrl = 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg';
                   this.studentEducationLevel = this.getEducationLevel(this.student.type);
                   this.studentGender = this.genderFilter(this.student.type)
-                  this.imageUrl = this.student.imgUrl;
+                  this.imageUrl = this.student.imgURL;
                   this.ruleForm.name = this.student.name;
                   this.ruleForm.account = this.student.account;
                   this.ruleForm.gender = this.student.type % 2;
@@ -407,6 +489,7 @@ export default {
       };
       return genderMap[value] || 'Rather not say';
     },
+
   },
   mounted() {
     this.fetchStudentData();

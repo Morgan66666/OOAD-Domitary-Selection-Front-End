@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <div style="width: 100%;margin-top: 80px;z-index: 9900; display: flex; justify-content: center;">
-      <h1>队伍查询</h1>
-    </div>
+  <div >
 
+    <div style="width: 100%;margin-top: 80px;z-index: 9900; display: flex; justify-content: center;"><h1>学生查询</h1></div>
+      
     <div class="container">
-      <div action="" class="parent">
+      <div action="" class="parent" >
         <label for="checkbox" style="position: absolute; left: -20%;">高级</label>
         <input id="radio" type="checkbox" style="position: absolute; left: -10%; width: 10%;"
           @click="heightSelect = !heightSelect">
-        <input type="text" @keyup.enter="search" v-model="query" class="search" placeholder="搜索">
+        <input type="text"  @keyup.enter="search" v-model="query" class="search" placeholder="搜索">
         <input type="button" class="btn" @click="search()">
+
       </div>
     </div>
     <div v-if="heightSelect"
@@ -20,21 +20,20 @@
       <p>睡觉时间</p>
       <input type="time" v-model="sleepTime" style="width: 7%;margin: 10px;">
     </div>
+    <div v-if="resultsShow.length == 0" style="height: 300px;  display: flex; justify-content: center; align-items: center;">
+      <h4 style="opacity: 0.5;">无可展示内容</h4>
+    </div>
 
 
 
     <div class="results">
-      <div v-for="(result, index) in resultsShow" :key="index" class="result-card" @click="showGroupMessage(index)">
-        <h4>{{ result.teamName }}</h4>
-        <p>队长：{{ result.leader }}</p>
-        <div class="introduce">
-          {{ result.intro }}
+      <div v-for="(result, index) in resultsShow" :key="index" class="result-card" @click="showStudentMessage(index)">
+        <div class="profile-picture">
+          <img :src="result.imgURL" alt="Profile Picture" class="profile-img">
         </div>
-      </div>
-      <div v-if="resultsShow.length == 0" style="height: 300px; display: flex; justify-content: center; align-items: center;">
-      <h4 style="opacity: 0.5;">无可展示内容</h4>
-    </div>
 
+        <h4 style="margin: 20px;">{{ result.name }}</h4>
+      </div>
 
       <div v-if="pageTotal > 1" class="center">
         <ul class="pagination">
@@ -47,59 +46,31 @@
       </div>
     </div>
 
-    <div v-if="showGroupVis" class="modal" @click.self="showGroupVis = false">
+    <div v-if="showStudentVis" class="modal" @click.self="showStudentVis = false">
       <div class="modal-content">
-        <h4 class="info-line2">{{ showGroup.teamName }}</h4>
-        <p class="info-line2" style="display: flex; align-items: center; justify-content: space-between;">队长：{{
-          showGroup.leader }}</p>
+        <div class="profile-picture">
+          <img :src="showStudent.imgURL" alt="Profile Picture" class="profile-img">
+        </div>
+        <h4 class="info-line2">{{ showStudent.name }}</h4>
+        <p class="info-line2" style="display: flex; align-items: center; justify-content: space-between;">
+        类型： {{  showStudent.type }}</p>
         <div class="info-line2" style="display: flex; align-items: center; justify-content: space-between;">
-
-
           <p>
-            成员：
-            <template v-for="(student) in students">
-              {{ student.name }}
-            </template>
+            休息时间：{{ showStudent.sleepTime }} - {{ showStudent.awakeTime }}
           </p>
-
-          <button class="members-button" @click="showModalFuc()">详情</button>
         </div>
         <div class="introduce" style="display: flex; justify-self: start;margin-bottom: 0.5rem;
         margin-right: 2rem;
         margin-left: 2rem;
         margin-top: 10px;">
-          队伍介绍：{{ showGroup.intro }}
+          个人介绍：{{ showStudent.intro }}
         </div>
         <div style="display: flex;">
-          <button class="submit-button" @click="sendApply()" >申请入队</button>
+          <button class="submit-button" @click="gotoHomepage">进入主页</button>
         </div>
       </div>
     </div>
 
-    <div v-if="showModal" class="modal" @click.self="showModal = false">
-      <div class="modal-content">
-        <div v-for="(student, index) in students" :key="index" @click="toggleDetails(index)" class="student-info">
-          <div class="info-line">
-            <span>{{ student.name }}</span>
-            <span>{{ student.gender }}</span>
-            <span>{{ student.type }}</span>
-          </div>
-          <div v-if="student.showDetails">
-            <div class="info-line">
-              <p>睡觉时间：{{ student.sleepTime }}</p>
-              <p>起床时间：{{ student.awakeTime }}</p>
-            </div>
-            <div class="info-line">
-              <span>个人介绍：{{ student.intro }}</span>
-            </div>
-            <div style="display: flex; justify-content: center;">
-              <button class="enterHomePage-button" @click="gotoHomepage()">进入主页</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -118,10 +89,9 @@ export default {
       groupIndex: 1,
       results: [],
       resultsShow: [],
-      showModal: false,
-      showGroupVis: false,
+      showStudentVis: false,
       heightSelect: false,
-      showGroup: { teamName: "默认", leader: "默认", intro: "默认",leaderId:0 },
+      showStudent: { name: "默认", type: "默认", awakeTime: "默认", sleepTime: "默认", intro: "默认" },
       students: [],
     };
   },
@@ -138,7 +108,7 @@ export default {
       let query = this.query
       if (query == "")
         query = "%20"
-      let url = "/teams/teams/findteam/" + sleepTime + "/" + awakeTime + "/" + query
+      let url = "/users/finduser/" + sleepTime + "/" + awakeTime + "/" + query
       console.log(url)
       let config = {
         headers: {
@@ -148,36 +118,30 @@ export default {
       console.log(config)
       this.$axios.get(url, config).then((response) => {
         if (response.data.code == 200) {
-          console.log(response.data.data)
-          let leader;
           for (let i in response.data.data) {
             let data = response.data.data[i]
-            this.$axios.get("users?id=" + data.leader, config).then(
-              (response1) => {
-                let temp = response1.data.data
-
-                leader = temp.name
-                console.log(leader)
-                temp = { groupId: data.groupId, leader: leader, leaderId: data.leader, teamName: data.name, intro: data.intro }
-                this.results.push(temp)
-
-                this.updateShowResult(this.page)
-                this.pageTotal = Math.ceil(this.results.length / this.pageSize)
-                this.pages = []
-                if (this.pageTotal < 1) {
-                  this.pages = []
-                } else {
-                  for (let i = 1; i <= this.pageTotal + 1; i++) {
-                    this.pages.push(i)
-                    if (i == this.pageSize) break
-                  }
-
-                }
-              }).catch((error) => {
-                console.log(error)
-              })
-            console.log("获取到的results" + this.results + "for循环结束")
+            console.log(data)
+            let temp = {
+              name: data.name,
+              type: data.leader,
+              intro: data.intro,
+              awakeTime: data.awakeTime,
+              sleepTime: data.sleepTime,
+              imgURL: data.imgURL
+            }
+            if (temp.type == 1 || temp.type == 2) {
+              temp.type = "硕士生"
+            } else {
+              temp.type = "博士生"
+            }
+            if (temp.type == 1||temp.type == 3) {
+              temp.gender = "男"
+            } else {
+              temp.gender = "女"
+            }
+            this.results.push(temp)
           }
+          this.pageTurning(1)
 
         }
       }).catch((error) => {
@@ -189,59 +153,25 @@ export default {
 
     },
 
-    showModalFuc() {
-      this.showModal = true;
 
-    },
-
-    showGroupMessage(index) {
+    showStudentMessage(index) {
       this.groupIndex = index + 1
-      this.showGroupVis = true
-      this.showGroup.teamName = this.resultsShow[index].teamName
-      this.showGroup.leader = this.resultsShow[index].leader
-      this.showGroup.intro = this.resultsShow[index].intro
-      this.showGroup.leaderId = this.resultsShow[index].leaderId
-      console.log(index)
+      this.showStudentVis = true
+      this.showStudent.id = this.resultsShow[index].id
+      this.showStudent.name = this.resultsShow[index].name
+      this.showStudent.type = this.resultsShow[index].type
+      this.showStudent.intro = this.resultsShow[index].intro
+      this.showStudent.awakeTime = this.resultsShow[index].awakeTime
+      this.showStudent.sleepTime = this.resultsShow[index].sleepTime
+      this.showStudent.imgURL = this.resultsShow[index].imgURL
 
-      index = this.groupIndex - 1
-      console.log(index)
-      //todo 从后端获取数据，填充到students中
-      let groupId = this.resultsShow[index].groupId
-      let config = {
-        headers: {
-          'Authorization': localStorage.getItem("jwt"),
-        }
-      }
-      this.$axios.get("/teams/" + groupId + "/members", config).then(
-        (response) => {
-          let data = response.data.data
-          this.students = []
-          for (let i in data) {
-            let temp = data[i]
-            if (temp.type == 1 || temp.type == 2) {
-              temp.type = "硕士生"
-            } else {
-              temp.type = "博士生"
-            }
-            if (temp.type == 1||temp.type == 3) {
-              temp.gender = "男"
-            } else {
-              temp.gender = "女"
-            }
-            temp.showDetails = false
-            this.students.push(data[i])
-          }
-        }
-      ).catch((error) => {
-        console.log(error)
-      })
     },
     gotoHomepage() {
-      //todo 转移到主页
+      this.$router.push('/user/' + this.showStudent.id)
     },
     pageTurning(key) {
-      console.log("选择页码" + key)
-      console.log("总页数" + this.pageTotal)
+      this.pageTotal = Math.ceil(this.results.length / this.pageSize)
+
       if (key < 1 || key > this.pageTotal)
         return
       let left = key
@@ -273,29 +203,6 @@ export default {
         this.resultsShow.push(this.results[temp])
         temp++
       }
-    },
-    sendApply(){
-      let leaderId = this.showGroup.leaderId
-      let config = {
-        headers: {
-          'Authorization': localStorage.getItem("jwt"),
-        }
-      }
-      this.$axios.post("/teams/join",{
-        leaderId:leaderId,
-        message:"我选择了你的队伍，请让我进去吧，我什么都可以干的"
-      },config).then(
-        (response)=>{
-          if(response.data.code == 200){
-            alert("申请成功")
-          }
-          else{
-            alert("申请失败")
-          }
-        }
-      ).catch((error) => {
-        console.log(error)
-      })
     }
 
   }
@@ -486,47 +393,11 @@ input {
 }
 
 .members-button {
-  width: 6rem;
-  height: 2rem;
+  width: 60px;
+  height: 20px;
   border: black solid 1px;
   border-radius: 0.25rem;
-  background-color: #000000;
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.members-button:hover {
-  width: 6rem;
-  height: 2rem;
-  border: black solid 1px;
-  border-radius: 0.25rem;
-  background-color: #ffffff;
-  color: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.enterHomePage-button {
-  width: 6rem;
-  height: 2rem;
-  border: black solid 1px;
-  border-radius: 0.25rem;
-  background-color: #000000;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.enterHomePage-button:hover {
-  width: 6rem;
-  height: 2rem;
-  border: black solid 1px;
-  border-radius: 0.25rem;
-  background-color: white;
+  background-color: #d9e6e6;
   color: #000000;
   display: flex;
   justify-content: center;
@@ -557,6 +428,7 @@ ul.pagination li a {
   padding: 8px 16px;
   text-decoration: none;
   font-size: 18px;
+  /* 缩小字体大小 */
 }
 
 ul.pagination li a.active {
@@ -564,7 +436,6 @@ ul.pagination li a.active {
   color: white;
   border-radius: 5px;
 }
-
 
 ul.pagination li a:hover:not(.active) {
   background-color: #ddd;
@@ -587,6 +458,8 @@ ul.pagination li a {
   margin: 0 4px;
   transition: background-color .3s;
 }
+
+
 
 div.center {
   text-align: center;

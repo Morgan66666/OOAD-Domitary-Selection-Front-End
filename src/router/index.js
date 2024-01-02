@@ -42,7 +42,7 @@ const routes = [
     path: '/room/search',
     name: 'RoomSearchView',
     component: () => import(/* webpackChunkName: "about" */ '../views/RoomSearchView.vue'),
-    meta: {show:false}
+    meta: {show:true}
   },{
     path: '/room',
     name: 'RoomView',
@@ -57,6 +57,11 @@ const routes = [
     path: '/chat',
     name: 'MessageView',
     component: () => import(/* webpackChunkName: "about" */ '../views/MessageView.vue'),
+    meta: {show:true}
+  },{
+    path: '/student/search',
+    name: 'StudentSearchView',
+    component: () => import(/* webpackChunkName: "about" */ '../views/StudentSearchView.vue'),
     meta: {show:true}
   }
   ,{

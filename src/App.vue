@@ -37,17 +37,21 @@
           </div>
           <div class="avatar-container">
             <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>
-          </div>
-          <div class="dropdown" v-if="showDropdown">
-            <ul>
-              <li>Profile</li>
-              <li>Settings</li>
-              <li>Logout</li>
-            </ul>
+            <div class="dropdown" v-if="showDropdown">
+              <ul>
+                <router-link :to="`/user/${id}`" style="color: inherit; text-decoration: none;">
+                  <li>主页</li>
+                </router-link>
+                <li @click="logout">注销</li>
+              </ul>
+            </div>
           </div>
         </div>
+
       </div>
+
     </div>
+
 
     <div :class="{ 'margin-top-60': $route.meta.show}">
       <router-view/>
@@ -62,13 +66,14 @@ export default {
   data() {
     return {
       showDropdown: false,
-      studentId: '11910101',
-      studentName: '张三',
-      currentPeriod: '选房阶段',
-      userAvatarUrl: 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg'
+      userAvatarUrl: 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg',
+      id: ''
     };
   },
   methods: {
+    logout(){
+
+    },
     toggleDropdown() {
       event.stopPropagation();
       this.showDropdown = !this.showDropdown;
@@ -77,10 +82,34 @@ export default {
       if (this.showDropdown) {
         this.showDropdown = false;
       }
+    },
+    getInfo (){
+      this.$axios.get('/users/getid')
+          .then(response => {
+            this.id = response.data.data;
+            // alert(studentId)
+
+            this.$axios.get('/users',
+                {
+                  params: {
+                    id: this.id
+                  }
+                })
+                .then(response => {
+                  this.userAvatarUrl = response.data.data.imgURL;
+                })
+                .catch(error => {
+                  console.error('Error fetching student data:', error);
+                });
+          })
+          .catch(error => {
+            console.error('Error fetching student id:', error);
+          });
     }
   },
   mounted() {
     document.addEventListener('click', this.closeDropdown);
+    this.getInfo();
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);
@@ -201,14 +230,13 @@ nav a {
 
 
 .dropdown {
-  position: absolute;
-  top: 100px; /* 根据需要调整 */
-  right: 10px;
+  top: 20px; /* 根据需要调整 */
+  right: 20px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  width: 80px;
 }
 
 .dropdown ul {
