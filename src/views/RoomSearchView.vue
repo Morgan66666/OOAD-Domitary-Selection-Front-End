@@ -64,6 +64,7 @@
 </template>
 
 <script>
+
 export default {
   mounted() {
     this.config = {
@@ -91,7 +92,7 @@ export default {
       buildings: [],
       floors: [],
       rooms: [],
-      capacities: ['-',2,3,4],
+      capacities: ['-',1,2,3,4],
       pages: [],
       page: 0,
       pageSize: 8,
@@ -142,7 +143,9 @@ export default {
               capacity: (data[i].type - 1)%4 + 1,
               starNum: data2[data[i].roomId].starList.length,
               chose: data2[data[i].roomId].chose[0],
-              room: data[i].name}
+              room: data[i].name,
+              roomId: data[i].roomId
+            }
             this.resultsAll.push(temp)
           }
           if(this.selectedCapacity != '-'&&this.selectedCapacity != ''){
@@ -174,8 +177,9 @@ export default {
         this.pageTurning(1)
       }
     },
-    gotoHomepage() {
-      //todo 转移到主页
+    gotoHomepage(index) {
+      let room = this.resultsShow[index]
+      this.$router.push('/room?roomId=' +  room.roomId)
     },
     pageTurning(key) {
       console.log("选择页码" + key)
@@ -214,6 +218,19 @@ export default {
       }
     }
 
+  },
+  created() {
+    this.$axios.get('/check')
+        .then(response => {
+          if (response.data.code !== 200) {
+            this.$router.push({path:"/login"})
+          }
+          console.log('Success fetching data:', response)
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          this.$router.push({path:"/login"})
+        });
   }
 };
 

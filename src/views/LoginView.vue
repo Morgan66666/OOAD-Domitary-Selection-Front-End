@@ -25,7 +25,10 @@
       <div class="create-account">
         <a href="#">忘记密码</a>
       </div>
-      <button v-on:click = "login">登录</button>
+<!--      <a href="/home">-->
+        <button v-on:click = "login">登录</button>
+<!--      </a>-->
+
     </div>
   </div>
 </template>
@@ -34,7 +37,7 @@
 
 
 import axiosInstance from '../axios-config'
-
+import global from "@/components/Global.vue";
 export default {
   data() {
     return {
@@ -64,6 +67,7 @@ export default {
       }
     },
     login() {
+      // alert("login")
       let loginForm = {
         username: this.username,
         password: this.password
@@ -74,9 +78,28 @@ export default {
           console.log(response.data)
           if (response.data.code === 200) {
             axiosInstance.defaults.headers.common['Authorization'] = response.data.data[0];
-            localStorage.setItem('token', response.data.data[0]);
-            alert(response.data.data[0])
-            this.$router.push('/home')
+            localStorage.setItem('jwt', response.data.data[0]);
+            localStorage.setItem('userAuthToken', response.data.data[0]);
+            localStorage.setItem('name', response.data.data[1].name);
+            localStorage.setItem('account', response.data.data[1].account);
+            localStorage.setItem('teamId', response.data.data[1].groupId);
+            localStorage.setItem('avatar', response.data.data[1].imgURL);
+            // localStorage.setItem('avatar', user.img_url);
+            // alert(response.data.data[0])
+            this.$axios.get('/users/getid')
+                .then(response => {
+                  let id = response.data.data;
+                  // alert(studentId)
+                  localStorage.setItem('id', id);
+                  localStorage.setItem('userId', id);
+                  global.isStudent = id.startsWith('2');
+                  // alert(global.isStudent)
+                  this.$router.push('/home')
+                })
+                .catch(error => {
+                  console.error('Error fetching student id:', error);
+                });
+
           } else {
             alert(response.data.msg)
           }

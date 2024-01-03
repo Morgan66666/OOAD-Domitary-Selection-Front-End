@@ -4,7 +4,7 @@ import axios from 'axios';
 
 
 const instance = axios.create({
-    baseURL: 'https://cs309.cxpcn.site',
+    baseURL: 'https://api.cxpcn.site',
     headers: {
 
     },

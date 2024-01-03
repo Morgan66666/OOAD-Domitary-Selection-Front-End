@@ -39,7 +39,10 @@
         </div>
       </div>
       <el-button type="primary" class="edit-button" @click="edit" v-if="self1 || teacher" >编辑信息</el-button>
+      <el-button type="primary" class="edit-button" @click="remove" v-if="teacher" >删除学生</el-button>
+      <el-button type="primary" class="edit-button" @click="apply" v-if="!self1 && !teacher" >申请换房</el-button>
       <el-button v-if="!self1" @click="chat">聊天</el-button>
+
     </div>
     <div v-else>Loading...</div>
     <el-dialog title="" :visible.sync="dialogFormVisible" class="dialog-st" width="31%" v-if="self1">
@@ -222,6 +225,51 @@ export default {
     }
   },
   methods: {
+    remove(){
+      this.$axios.delete('/users/' + this.id)
+          .then(response =>{
+            if (response.data.code === 200) {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+              this.$router.push('/home')
+            }
+            else {
+              this.$message({
+                message: response.data.msg,
+                type: "error"
+              })
+            }
+          })
+          .catch(error => {
+            console.error(error)
+          })
+    },
+    apply(){
+      this.$axios.post('/exchange',
+          {
+            leaderId: this.id,
+            message: '申请换房'
+          })
+          .then(response => {
+            if (response.data.code === 200) {
+              this.$message({
+                message: '申请成功',
+                type: 'success'
+              });
+            } else {
+              this.$message({
+                message: response.data.msg,
+                type: 'error'
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching student data:', error);
+          });
+
+    },
     handleUpload(file) {
       this.getOssSignature().then(signatureInfo => {
         console.log('获取签名信息成功', signatureInfo);
@@ -448,6 +496,7 @@ export default {
                 .then(response => {
                   this.student = response.data.data;
                   // this.student.imgUrl = 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg';
+                  // alert(this.student)
                   this.studentEducationLevel = this.getEducationLevel(this.student.type);
                   this.studentGender = this.genderFilter(this.student.type)
                   this.imageUrl = this.student.imgURL;
@@ -493,6 +542,19 @@ export default {
   },
   mounted() {
     this.fetchStudentData();
+  },
+  created() {
+    this.$axios.get('/check')
+        .then(response => {
+          if (response.data.code !== 200) {
+            this.$router.push({path:"/login"})
+          }
+          console.log('Success fetching data:', response)
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          this.$router.push({path:"/login"})
+        });
   }
 };
 </script>
@@ -551,11 +613,7 @@ export default {
   width: 200px;
 }
 
-.profile-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-}
+
 
 .info-item {
   display: flex;
@@ -586,7 +644,11 @@ export default {
   font-size: 16px;
   color: #5f6368;
 }
-
+.profile-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
 
 /* Add any additional styling or responsive design features as needed */
 </style>

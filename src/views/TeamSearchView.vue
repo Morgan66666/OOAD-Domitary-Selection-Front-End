@@ -71,7 +71,7 @@
           队伍介绍：{{ showGroup.intro }}
         </div>
         <div style="display: flex;">
-          <button class="submit-button" @click="sendApply()" >申请入队</button>
+          <button class="submit-button" @click="gotoHomepage()" >进入主页</button>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@
               <span>个人介绍：{{ student.intro }}</span>
             </div>
             <div style="display: flex; justify-content: center;">
-              <button class="enterHomePage-button" @click="gotoHomepage()">进入主页</button>
+              <button class="enterHomePage-button" @click="sendApply(student.studentId)">进入主页</button>
             </div>
           </div>
 
@@ -201,6 +201,7 @@ export default {
       this.showGroup.leader = this.resultsShow[index].leader
       this.showGroup.intro = this.resultsShow[index].intro
       this.showGroup.leaderId = this.resultsShow[index].leaderId
+      this.showGroup.groupId = this.resultsShow[index].groupId
       console.log(index)
 
       index = this.groupIndex - 1
@@ -237,7 +238,7 @@ export default {
       })
     },
     gotoHomepage() {
-      //todo 转移到主页
+      this.$router.push('/team?teamId=' + this.showGroup.groupId)
     },
     pageTurning(key) {
       console.log("选择页码" + key)
@@ -274,33 +275,25 @@ export default {
         temp++
       }
     },
-    sendApply(){
-      let leaderId = this.showGroup.leaderId
-      let config = {
-        headers: {
-          'Authorization': localStorage.getItem("jwt"),
-        }
-      }
-      this.$axios.post("/teams/join",{
-        leaderId:leaderId,
-        message:"我选择了你的队伍，请让我进去吧，我什么都可以干的"
-      },config).then(
-        (response)=>{
-          if(response.data.code == 200){
-            alert("申请成功")
-          }
-          else{
-            alert("申请失败")
-          }
-        }
-      ).catch((error) => {
-        console.log(error)
-      })
-    }
+    sendApply(index) {
 
+      this.$router.push({ path: '/user/'+ index})
+    }
+  },
+  created() {
+    this.$axios.get('/check')
+        .then(response => {
+          if (response.data.code !== 200) {
+            this.$router.push({path:"/login"})
+          }
+          console.log('Success fetching data:', response)
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          this.$router.push({path:"/login"})
+        });
   }
 };
-
 </script>
 
 <style scoped>

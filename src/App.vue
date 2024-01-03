@@ -26,7 +26,7 @@
       </div>
       <div class="right-section">
         <div class="header-actions">
-          <div class="button-container">
+          <div class="button-container" v-if="isStudent">
             <button style="height: 30px; border: none; background-color: transparent">
               <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"
                    focusable="false">
@@ -39,10 +39,14 @@
             <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>
             <div class="dropdown" v-if="showDropdown">
               <ul>
-                <router-link :to="`/user/${id}`" style="color: inherit; text-decoration: none;">
+                <router-link :to="`/user/${id}`" style="color: inherit; text-decoration: none;" v-if="isStudent">
                   <li>主页</li>
                 </router-link>
-                <li @click="logout">注销</li>
+                <li @click="logout">
+                  <a href="" style= "color: inherit; text-decoration: none;">
+                    注销
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -54,25 +58,37 @@
 
 
     <div :class="{ 'margin-top-60': $route.meta.show}">
-      <router-view/>
+      <router-view v-on:child-event="getInfo()" ></router-view>
     </div>
 
   </div>
 </template>
 
 <script>
-
+import global from "@/components/Global.vue";
 export default {
+
   data() {
     return {
       showDropdown: false,
       userAvatarUrl: 'https://www.gstatic.com/pantheon/images/welcome/supercloud.svg',
-      id: ''
+      id: '',
+      globalStudentStatus: global.isStudent,
+      isStudent: true
     };
   },
   methods: {
     logout(){
+      this.$axios.post('/logout')
+          .then(response => {
 
+              console.log(response.data)
+          })
+          .catch(error => {
+            console.error('Error fetching student id:', error);
+          });
+      localStorage.removeItem("jwt");
+      this.$router.push("/login");
     },
     toggleDropdown() {
       event.stopPropagation();
@@ -84,11 +100,15 @@ export default {
       }
     },
     getInfo (){
+      // alert("getInfo")
       this.$axios.get('/users/getid')
           .then(response => {
             this.id = response.data.data;
+            // alert(this.id)
             // alert(studentId)
-
+            this.isStudent = this.id.startsWith('2');
+            localStorage.setItem("isStudent1",this.isStudent ? '1':'0')
+            // alert(this.isStudent)
             this.$axios.get('/users',
                 {
                   params: {
@@ -105,14 +125,77 @@ export default {
           .catch(error => {
             console.error('Error fetching student id:', error);
           });
+
     }
   },
   mounted() {
+    //如果没有设置Auth,而localStorage中有Auth,则将其设置为localStorage中的值
+    if (!this.$store.state.Auth && localStorage.getItem('userAuthToken')) {
+      // axios.defaults.headers.common['Authorization'] = localStorage.getItem('userAuthToken')
+
+      const sessionId = localStorage.getItem('userAuthToken'); // 从登录等操作获取用户会话 ID
+      // 创建 WebSocket 连接
+      this.$store.state.ws = new WebSocket('wss://api.cxpcn.site/ws/create?session_id=' + sessionId);
+
+      // 在 WebSocket 连接建立时触发
+      this.$store.state.ws.addEventListener("open", (event) => {
+        console.log("WebSocket 连接已建立:", event);
+      });
+      // 在接收到 WebSocket 消息时触发
+      this.$store.state.ws.addEventListener("message", (event) => {
+        // 处理接收到的消息，更新前端界面等操作
+        // 可以简单的认为localStorage里这个值不等于0就是有新消息
+        let receivedData;
+        try {
+          receivedData = JSON.parse(event.data);
+          receivedData = event.data;
+          if(receivedData.unreadMsgNum !== undefined){
+            localStorage.setItem('unreadMsgNum', receivedData.unreadMsgNum.toString())
+          }
+          if(receivedData.msgId !== undefined){
+            if(localStorage.getItem('unreadMsgNum') === null || localStorage.getItem('unreadMsgNum') === undefined){
+              localStorage.setItem('unreadMsgNum', '0')
+            }
+            localStorage.setItem('unreadMsgNum', (parseInt(localStorage.getItem('unreadMsgNum')) + 1).toString())
+          }
+        } catch (e) {
+          console.log("接收到非 JSON 格式的消息:", event.data);
+        }
+        console.log("接收到消息:", receivedData);
+        // 这里可以根据消息类型进行不同的处理
+      });
+
+
+      // 在连接关闭时触发
+      this.$store.state.ws.addEventListener("close", (event) => {
+        console.log("WebSocket 连接已关闭:", event);
+      });
+
+      // 在连接发生错误时触发
+      this.$store.state.ws.addEventListener("error", (error) => {
+        console.error("WebSocket 连接发生错误:", error);
+      });
+    }
+    console.log("ws:"+this.$store.state.ws)
     document.addEventListener('click', this.closeDropdown);
     this.getInfo();
   },
+  created() {
+ // 每秒检查一次
+  },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);
+    clearInterval(this.interval);
+  },
+  // computed: {
+  //   isStudent() {
+  //     return this.globalStudentStatus;
+  //   }
+  // },
+  watch: {
+    $route() {
+      this.getInfo();
+    }
   }
 }
 </script>

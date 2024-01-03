@@ -13,6 +13,7 @@
 
       </div>
     </div>
+
     <div v-if="heightSelect"
       style="width: 100%; height: 30px; background-color: white; display: flex; justify-content: center; align-items: center; ">
       <p>起床时间</p>
@@ -75,6 +76,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -127,7 +129,8 @@ export default {
               intro: data.intro,
               awakeTime: data.awakeTime,
               sleepTime: data.sleepTime,
-              imgURL: data.imgURL
+              imgURL: data.imgURL,
+              id: data.studentId
             }
             if (temp.type == 1 || temp.type == 2) {
               temp.type = "硕士生"
@@ -157,17 +160,17 @@ export default {
     showStudentMessage(index) {
       this.groupIndex = index + 1
       this.showStudentVis = true
-      this.showStudent.id = this.resultsShow[index].id
       this.showStudent.name = this.resultsShow[index].name
       this.showStudent.type = this.resultsShow[index].type
       this.showStudent.intro = this.resultsShow[index].intro
       this.showStudent.awakeTime = this.resultsShow[index].awakeTime
       this.showStudent.sleepTime = this.resultsShow[index].sleepTime
       this.showStudent.imgURL = this.resultsShow[index].imgURL
+      this.showStudent.id = this.resultsShow[index].id
 
     },
     gotoHomepage() {
-      this.$router.push('/user/' + this.showStudent.id)
+      this.$router.push({ path: '/user/'+this.showStudent.id})
     },
     pageTurning(key) {
       this.pageTotal = Math.ceil(this.results.length / this.pageSize)
@@ -205,9 +208,22 @@ export default {
       }
     }
 
+  },
+  created() {
+    // alert(global.isStudent)
+    this.$axios.get('/check')
+        .then(response => {
+          if (response.data.code !== 200) {
+            this.$router.push({path:"/login"})
+          }
+          console.log('Success fetching data:', response)
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          this.$router.push({path:"/login"})
+        });
   }
 };
-
 </script>
 
 <style scoped>
@@ -464,4 +480,13 @@ ul.pagination li a {
 div.center {
   text-align: center;
   width: 100%;
-}</style>
+}
+
+.profile-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+
+</style>
