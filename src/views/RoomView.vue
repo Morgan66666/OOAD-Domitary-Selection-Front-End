@@ -39,29 +39,20 @@
         <p>Loading comments...</p>
       </div>
       <div v-else>
-        <div>
-          <!-- <p v-if="comment.post_id !== this.isReply">{{ '回复： ' + this.getReplyContent(comment.post_id).body }}</p> -->
-          <div class="comment-container">
-            <router-link :to="'/user?id=' + comment.userId">
-              <img :src="comment.creationTime" alt="Sender Avatar" class="sender-avatar" v-if="comment.userId !== 0"/>
-            </router-link>
-            <div class="comment-content">
-              <p class="comment-title">{{ comment.title }}：</p>
-              <p class="comment-body">{{ comment.body }}</p>
-            </div>
-          </div>
-          <div>
-            <div v-for="comment1 in comment.secondLevelComments" :key="comment1.commentId" class="comment-item">
-              <div class="comment-container">
-                <router-link :to="'/user?id=' + comment.userId">
-                  <img :src="comment1.creationTime" alt="Sender Avatar" class="sender-avatar" v-if="comment1.userId !== 0"/>
-                </router-link>
-                <div class="comment-content">
-                  <p class="comment-title">{{ comment1.title }}：</p>
-                  <p class="comment-body">{{ comment1.body }}</p>
-                </div>
+        <!-- 遍历评论，每个评论作为一个 media -->
+        <div v-for="comment in firstLevelComments" :key="comment.commentId" class="comment-item">
+          <!-- 评论内容 -->
+          <div class="comment-content">
+            <!-- <p v-if="comment.post_id !== this.isReply">{{ '回复： ' + this.getReplyContent(comment.post_id).body }}</p> -->
+
+            <p>{{ comment.body }}</p>
+            <div>
+                <div v-for="comment1 in comment.secondLevelComments" :key="comment1.commentId" class="comment-item">
+                 <p>{{ comment1.body }}</p>
+
               </div>
             </div>
+
           </div>
           <!-- 添加回复按钮 -->
           <button v-if="!comment.disabled" class="button" @click="replyToComment(comment.commentId)">回复</button>
@@ -206,7 +197,6 @@ export default {
       this.room.status = response.data.data.status
       if (response.data.data.imgURL != null) {
         this.room.imgUrl = response.data.data.imgURL
-        alert(this.room.imgUrl)
       }
       this.isReply = response.data.data.commentBaseId
     })
@@ -589,26 +579,6 @@ export default {
 
 .form-group {
   margin-bottom: 1rem;
-}
-
-.sender-avatar{
-  float: right;
-  width: 50px; /* 设置图片宽度 */
-  height: 50px; /* 设置图片高度 */
-  object-fit: contain; /* 控制图片如何填充容器 */
-  border: 1px solid #ccc; /* 可选：添加边框样式 */
-}
-.comment-container {
-  display: flex;
-  flex-direction: column; /* 将子元素垂直排列 */
-}
-
-.comment-content {
-  margin-top: 10px; /* 控制标题和 body 之间的间距，可根据需要调整 */
-}
-
-.comment-title {
-  font-weight: bold; /* 使标题加粗，根据需要调整其他样式 */
 }
 
 /* 输入框和按钮样式 */

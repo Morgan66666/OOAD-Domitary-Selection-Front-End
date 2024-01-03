@@ -17,7 +17,7 @@
          class="cfc-platform-bar-container cfc-platform-bar-shadow cfc-platform-bar-white gm2-platform-bar"
          v-if="$route.meta.show">
       <div class="left-section">
-        
+
         <router-link :to="{name: 'HomeView'}">
           <div class="project-info">
             <img src="./assets/LOGO.svg" class="logo" alt="">
@@ -26,15 +26,17 @@
       </div>
       <div class="right-section">
         <div class="header-actions">
-          <div class="button-container" v-if="isStudent">
-            <button style="height: 30px; border: none; background-color: transparent">
-              <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"
-                   focusable="false">
-                <path
-                    d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z"></path>
-              </svg>
-            </button>
-          </div>
+          <router-link to="/chat">
+            <div class="button-container" v-if="isStudent">
+              <button style="height: 30px; border: none; background-color: transparent">
+                <svg height="100%" width="100%" viewBox="0 96 960 960" preserveAspectRatio="xMidYMid meet"
+                     focusable="false">
+                  <path
+                      d="M700 576q0-92-64-156t-156-64q92 0 156-64t64-156q0 92 64 156t156 64q-92 0-156 64t-64 156ZM80 976V256q0-33 23.5-56.5T160 176h400v80H160v480h640V495h80v241q0 33-23.5 56.5T800 816H240L80 976Zm160-320v-80h400v80H240Zm0-120v-80h360v80H240Zm0-120v-80h200v80H240Z"></path>
+                </svg>
+              </button>
+            </div>
+          </router-link>
           <div class="avatar-container">
             <img :src="userAvatarUrl" alt="User" class="icon avatar" @click="toggleDropdown"/>
             <div class="dropdown" v-if="showDropdown">
@@ -43,7 +45,7 @@
                   <li>主页</li>
                 </router-link>
                 <li @click="logout">
-                  <a href="" style= "color: inherit; text-decoration: none;">
+                  <a href="" style="color: inherit; text-decoration: none;">
                     注销
                   </a>
                 </li>
@@ -58,7 +60,7 @@
 
 
     <div :class="{ 'margin-top-60': $route.meta.show}">
-      <router-view v-on:child-event="getInfo()" ></router-view>
+      <router-view v-on:child-event="getInfo()"></router-view>
     </div>
 
   </div>
@@ -66,6 +68,7 @@
 
 <script>
 import global from "@/components/Global.vue";
+
 export default {
 
   data() {
@@ -78,11 +81,11 @@ export default {
     };
   },
   methods: {
-    logout(){
+    logout() {
       this.$axios.post('/logout')
           .then(response => {
 
-              console.log(response.data)
+            console.log(response.data)
           })
           .catch(error => {
             console.error('Error fetching student id:', error);
@@ -99,7 +102,7 @@ export default {
         this.showDropdown = false;
       }
     },
-    getInfo (){
+    getInfo() {
       // alert("getInfo")
       this.$axios.get('/users/getid')
           .then(response => {
@@ -107,7 +110,7 @@ export default {
             // alert(this.id)
             // alert(studentId)
             this.isStudent = this.id.startsWith('2');
-            localStorage.setItem("isStudent1",this.isStudent ? '1':'0')
+            localStorage.setItem("isStudent1", this.isStudent ? '1' : '0')
             // alert(this.isStudent)
             this.$axios.get('/users',
                 {
@@ -149,11 +152,11 @@ export default {
         try {
           receivedData = JSON.parse(event.data);
           receivedData = event.data;
-          if(receivedData.unreadMsgNum !== undefined){
+          if (receivedData.unreadMsgNum !== undefined) {
             localStorage.setItem('unreadMsgNum', receivedData.unreadMsgNum.toString())
           }
-          if(receivedData.msgId !== undefined){
-            if(localStorage.getItem('unreadMsgNum') === null || localStorage.getItem('unreadMsgNum') === undefined){
+          if (receivedData.msgId !== undefined) {
+            if (localStorage.getItem('unreadMsgNum') === null || localStorage.getItem('unreadMsgNum') === undefined) {
               localStorage.setItem('unreadMsgNum', '0')
             }
             localStorage.setItem('unreadMsgNum', (parseInt(localStorage.getItem('unreadMsgNum')) + 1).toString())
@@ -176,12 +179,12 @@ export default {
         console.error("WebSocket 连接发生错误:", error);
       });
     }
-    console.log("ws:"+this.$store.state.ws)
+    console.log("ws:" + this.$store.state.ws)
     document.addEventListener('click', this.closeDropdown);
     this.getInfo();
   },
   created() {
- // 每秒检查一次
+    // 每秒检查一次
   },
   beforeDestroy() {
     document.removeEventListener('click', this.closeDropdown);

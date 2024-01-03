@@ -216,15 +216,17 @@ export default {
       this.$axios.get("/teams/" + groupId + "/members", config).then(
         (response) => {
           let data = response.data.data
+          console.log(data)
           this.students = []
           for (let i in data) {
             let temp = data[i]
-            if (temp.type == 1 || temp.type == 2) {
+            let type = temp.type
+            if (type == 1 || type == 2) {
               temp.type = "硕士生"
             } else {
               temp.type = "博士生"
             }
-            if (temp.type == 1||temp.type == 3) {
+            if (type == 1||type == 3) {
               temp.gender = "男"
             } else {
               temp.gender = "女"

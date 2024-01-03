@@ -69,7 +69,7 @@
 
         </div>
         <div v-if="selectedUser.id !== 0" class="chat-input">
-          <textarea v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type your message..."></textarea>
+          <textarea v-model="newMessage"  placeholder="Type your message..."></textarea>
           <button @click="sendMessage">Send</button>
         </div>
         <div v-else class="system-message">
@@ -188,12 +188,13 @@
   border-radius: 10px;
   padding: 10px;
   margin-top: 5px;
+
 }
 
 
 .chat-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 60px);
   background-color: #f0f0f0;
 }
 
@@ -300,7 +301,7 @@
 }
 
 .chat-input {
-  height: calc(40vh - 120px);
+  height: calc(40vh - 170px);
   margin-top: 20px;
   display: flex;
 }
@@ -435,6 +436,7 @@ export default {
 
     // 处理拒绝申请
     rejectApplication(message) {
+      console.log(message)
       this.$axios.post('/teams/accept', {
         msgId: message.msgId.toString(),
         isAccepted: '0',
@@ -471,6 +473,7 @@ export default {
 
       try {
         this.sendWSMessage(msg);
+        this.newMessage = '';
       } catch (e) {
         console.log(e);
         alert("发送失败: " + e);
@@ -487,14 +490,14 @@ export default {
               return -1
             }
             let user = response.data.data
-            if (user.img_url === null || user.img_url === "" || user.img_url === "undefined" || user.img_url === undefined) {
-              user.img_url = "https://img2.baidu.com/it/u=3847095998,1084914510&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500";
+            if (user.imgURL === null || user.imgURL === "" || user.imgURL === "undefined" || user.imgURL === undefined) {
+              user.imgURL = "https://img2.baidu.com/it/u=3847095998,1084914510&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500";
             }
             console.log(user)
             this.users.push({
               id: user.studentId,
               name: user.name,
-              avatar: user.img_url,
+              avatar: user.imgURL,
               hasNewMessage: false,
               messages: []
             })

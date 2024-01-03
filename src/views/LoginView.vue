@@ -84,6 +84,7 @@ export default {
             localStorage.setItem('account', response.data.data[1].account);
             localStorage.setItem('teamId', response.data.data[1].groupId);
             localStorage.setItem('avatar', response.data.data[1].imgURL);
+            localStorage.setItem('type', response.data.data[1].type)
             // localStorage.setItem('avatar', user.img_url);
             // alert(response.data.data[0])
             this.$axios.get('/users/getid')
@@ -100,8 +101,6 @@ export default {
                   console.error('Error fetching student id:', error);
                 });
 
-          } else {
-            alert(response.data.msg)
           }
         })
         .catch((error) => {

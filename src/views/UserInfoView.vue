@@ -420,7 +420,7 @@ export default {
       });
     },
     chat() {
-      this.$router.push({path: '/chat', params: {id: this.id}})
+      this.$router.push({path: '/chat', params: {userId: this.id}})
     },
     formatTime(time) {
       if (!time) return '';
@@ -434,7 +434,6 @@ export default {
     submitForm() {
       this.form.awakeTime = this.formatTime(this.form.awakeTime);
       this.form.sleepTime = this.formatTime(this.form.sleepTime);
-      // alert(this.form.awakeTime)
       this.$axios.put('/users/' + this.studentId,
           {
             awakeTime: this.form.awakeTime,

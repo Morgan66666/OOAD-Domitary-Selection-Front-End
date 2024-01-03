@@ -310,6 +310,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'CloudDashboard',
   // 在这里添加JavaScript逻辑
@@ -434,7 +436,7 @@ export default {
                 if (response.data.code === 200) {
                   this.$message({
                     message: "创建成功",
-                    type: 'error'
+                    type: 'success'
                   });
                 } else
                   this.$message({
@@ -679,7 +681,6 @@ export default {
     // })
     
     let url = "/selection-time";
-    const currentTime = new Date();
     // let isS = localStorage.getItem("isStudent1") === '1';
     try {
       setTimeout(() => {
@@ -692,35 +693,81 @@ export default {
           this.isStudent = true;
         }
         if (isS) {
+          this.$axios.get('/timestage')
+              .then(response =>
+          {
+            let timeRanges
+            this.$axios.get(url)
+                .then(response => {
+                  timeRanges = [
+                    {
+                      beginTime: new Date(response.data.data.beginTime1),
+                      endTime: new Date(response.data.data.endTime1)
+                    },
+                    {
+                      beginTime: new Date(response.data.data.beginTime2),
+                      endTime: new Date(response.data.data.endTime2)
+                    },
+                    {
+                      beginTime: new Date(response.data.data.beginTime3),
+                      endTime: new Date(response.data.data.endTime3)
+                    },
+                    {beginTime: new Date(response.data.data.beginTime4), endTime: new Date(response.data.data.endTime4)}
+                  ];
+                  console.log(response.data.data)
+                  if (c == 1) {
+                    this.currentPeriod = "看房阶段"
+                  } else if (c == 2) {
+                    this.currentPeriod = "收藏限定选房阶段"
+                  } else if (c == 3) {
+                    this.currentPeriod = "选房阶段"
+                  } else if (c == 4) {
+                    this.currentPeriod = "调换阶段"
+                  } else {
+                    this.currentPeriod = "当前并未处于任何选房阶段"
+                  }
+                })
+                .catch(e => {
+                  console.log(e)
+                })
+            let c = response.data.data
+            alert(JSON.stringify(timeRanges))
+
+          })
+              .catch(error => {
+                console.error( error);
+              });
           // alert("学生")
-          this.$axios.get(url, this.config)
-              .then(response => {
-                    const timeRanges = [
-                      {beginTime: new Date(response.data.beginTime1), endTime: new Date(response.data.endTime1)},
-                      {beginTime: new Date(response.data.beginTime2), endTime: new Date(response.data.endTime2)},
-                      {beginTime: new Date(response.data.beginTime3), endTime: new Date(response.data.endTime3)},
-                      {beginTime: new Date(response.data.beginTime4), endTime: new Date(response.data.endTime4)}
-                    ];
-                    let currentRange = null;
-                    for (const range of timeRanges) {
-                      if (currentTime >= range.beginTime && currentTime < range.endTime) {
-                        currentRange = range;
-                        break;
-                      }
-                    }
-                    if (currentRange == 0) {
-                      this.currentPeriod = "看房阶段"
-                    } else if (currentRange == 1) {
-                      this.currentPeriod = "收藏限定选房阶段"
-                    } else if (currentRange == 2) {
-                      this.currentPeriod = "选房阶段"
-                    } else if (currentRange == 3) {
-                      this.currentPeriod = "调换阶段"
-                    } else {
-                      this.currentPeriod = "当前并未处于任何选房阶段"
-                    }
-                  },
-              )
+          // this.$axios.get(url)
+          //     .then(response => {
+          //           const timeRanges = [
+          //             {beginTime: new Date(response.data.data.beginTime1), endTime: new Date(response.data.data.endTime1)},
+          //             {beginTime: new Date(response.data.data.beginTime2), endTime: new Date(response.data.data.endTime2)},
+          //             {beginTime: new Date(response.data.data.beginTime3), endTime: new Date(response.data.data.endTime3)},
+          //             {beginTime: new Date(response.data.data.beginTime4), endTime: new Date(response.data.data.endTime4)}
+          //           ];
+          //           console.log(timeRanges)
+          //           let currentRange = null;
+          //           for (const range of timeRanges) {
+          //             if (currentTime >= range.beginTime && currentTime < range.endTime) {
+          //               currentRange = range;
+          //               break;
+          //             }
+          //           }
+          //           console.log('aduihasuiduisa'+currentRange)
+          //           if (currentRange == 1) {
+          //             this.currentPeriod = "看房阶段"
+          //           } else if (currentRange == 2) {
+          //             this.currentPeriod = "收藏限定选房阶段"
+          //           } else if (currentRange == 3) {
+          //             this.currentPeriod = "选房阶段"
+          //           } else if (currentRange == 4) {
+          //             this.currentPeriod = "调换阶段"
+          //           } else {
+          //             this.currentPeriod = "当前并未处于任何选房阶段"
+          //           }
+          //         },
+          //     )
         }
       }, 200);
     }
